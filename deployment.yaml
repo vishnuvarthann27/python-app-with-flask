@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flaskapp-deployment
+  labels:
+    app: flaskapp
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: flaskapp
+  template:
+    metadata:
+      labels:
+        app: flaskapp
+    spec:
+      containers:
+      - name: flaskappcontainer
+        image: vishnuvarthan2701/flask-app
+        ports:
+        - containerPort: 5000
+---
+# Nodeport service to expose the application
+apiVersion: v1
+kind: Service
+metadata:
+  name: flaskapp-service
+  namespace: default
+spec:
+  selector:
+    app: flaskapp
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000 
+  type: NodePort
